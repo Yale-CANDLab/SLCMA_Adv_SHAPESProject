@@ -1,0 +1,104 @@
+---
+title: "Developmental Timing of Adversity on Threat and Safety Learning"
+output: html_notebook
+---
+#load packages
+```{r}
+library(remotes)
+remotes::install_github('thedunnlab/slcma')
+library(slcma)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(robustHD)
+library(DescTools)
+library(corrplot)
+library(rstatix)
+```
+
+read in data
+```{r}
+df <- read.csv('/Users/sarahlempres/Desktop/Academia/Yale/Yale Research Projects/DevTiming-SHAPES-SLCMA/B&E/Submission materials/DevTiming_SHAPES_GitHub.csv')
+```
+
+Cumulative effects of adversity on threat and safety learning and psychopathology
+```{r}
+#left amygdala
+lamyg_cumulative <- lm(left_amygdala_Shen368_tvs_unreg ~ Total_Events + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, data = df)
+summary(lamyg_cumulative)
+
+#right amygdala
+ramyg_cumulative <- lm(right_amygdala_Shen368_tvs_unreg ~ Total_Events + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, data = df)
+summary(ramyg_cumulative)
+
+#dACC
+dACC_cumulative <- lm(AAL3_dACC_tvs_unreg ~ Total_Events + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, data = df)
+summary(dACC_cumulative)
+
+#vmPFC m25
+m25_cumulative <- lm(Area25.AMINUS.BMINUS ~ Total_Events + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, data = df)
+summary(m25_cumulative)
+
+#vmPFC m24
+m24_cumulative <- lm(vmPFC.AMINUS.BMINUS ~ Total_Events + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, data = df) 
+summary(m24_cumulative)
+
+#anxiety symptoms
+SCAARED_cumulative <- lm(total_scared ~ Total_Events + age_at_ri + sex, data = df)  
+summary(SCAARED_cumulative)
+
+#trauma related symptoms
+tsc_cumulative <- lm(tsc_total ~ Total_Events + age_at_ri + sex, data = df)
+summary(tsc_cumulative)
+
+```
+
+Developmentally-specific effects of adversity on threat and safety learning
+```{r}
+#set seed 
+set.seed(123)
+
+#left amygdala 
+Lamyg_dev <- slcma(left_amygdala_Shen368_tvs_unreg ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, adjust=c(5,6,7,8), data = df)
+summary(Lamyg_dev)
+plot(Lamyg_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
+slcmaInfer(Lamyg_dev, 1, method="selectiveInference")
+
+#right amygdala 
+Ramyg_dev <- slcma(right_amygdala_Shen368_tvs_unreg ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, adjust=c(5,6,7,8), data = df)
+summary(Ramyg_dev)
+plot(Ramyg_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
+slcmaInfer(Ramyg_dev, 3, method="selectiveInference")
+
+#dACC
+dACC_dev <- slcma(AAL3_dACC_tvs_unreg ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, adjust=c(5,6,7,8), data = df)
+summary(dACC_dev)
+plot(dACC_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
+slcmaInfer(dACC_dev, 2, method="selectiveInference")
+
+#sgACC 
+sgACC_dev <- slcma(Area25.AMINUS.BMINUS ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, adjust=c(5,6,7,8), data = df)
+summary(sgACC_dev)
+plot(sgACC_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
+slcmaInfer(sgACC_dev, 2, method="selectiveInference")
+
+#vmPFC  #sig
+vmPFC_dev <- slcma(vmPFC.AMINUS.BMINUS ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + sex + age_at_scan + site_bin + aminus.bminus_mean_act_tvs_unreg, adjust=c(5,6,7,8), data = df)
+summary(vmPFC_dev)
+plot(vmPFC_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
+slcmaInfer(vmPFC_dev, 2, method="selectiveInference")
+
+#anxiety 
+SCAARED_dev <- slcma(total_scared ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + age_at_ri + sex, adjust=c(5,6), data = df) #middle childhood approaching 
+summary(SCAARED_dev)
+plot(SCAARED_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
+slcmaInfer(SCAARED_dev, 2, method="selectiveInference")
+
+
+#trauma related symptoms
+tsc_dev <- slcma(tsc_total ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + age_at_ri + sex, adjust=c(5,6), data = df) #middle childhood sig 
+summary(tsc_dev)
+plot(tsc_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
+slcmaInfer(tsc_dev, 1, method="selectiveInference")
+```
+
