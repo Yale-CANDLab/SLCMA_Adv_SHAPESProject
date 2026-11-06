@@ -44,11 +44,11 @@ m24_cumulative <- lm(vmPFC.AMINUS.BMINUS ~ Total_Events + sex + age_at_scan + si
 summary(m24_cumulative)
 
 #anxiety symptoms
-SCAARED_cumulative <- lm(total_scared ~ Total_Events + age_at_ri + sex, data = df)  
+SCAARED_cumulative <- lm(total_scared ~ Total_Events + age_at_distal + sex, data = df)  
 summary(SCAARED_cumulative)
 
 #trauma related symptoms
-tsc_cumulative <- lm(tsc_total ~ Total_Events + age_at_ri + sex, data = df)
+tsc_cumulative <- lm(tsc_total ~ Total_Events + age_at_distal + sex, data = df)
 summary(tsc_cumulative)
 
 ```
@@ -89,14 +89,14 @@ plot(vmPFC_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence",
 slcmaInfer(vmPFC_dev, 2, method="selectiveInference")
 
 #anxiety 
-SCAARED_dev <- slcma(total_scared ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + age_at_ri + sex, adjust=c(5,6), data = df) #middle childhood approaching 
+SCAARED_dev <- slcma(total_scared ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + age_at_distal + sex, adjust=c(5,6), data = df) #middle childhood approaching 
 summary(SCAARED_dev)
 plot(SCAARED_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
 slcmaInfer(SCAARED_dev, 2, method="selectiveInference")
 
 
 #trauma related symptoms
-tsc_dev <- slcma(tsc_total ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + age_at_ri + sex, adjust=c(5,6), data = df) #middle childhood sig 
+tsc_dev <- slcma(tsc_total ~ Early_Childhood + Mid_Childhood + Adolescence + Adulthood + age_at_distal + sex, adjust=c(5,6), data = df) #middle childhood sig 
 summary(tsc_dev)
 plot(tsc_dev, labels = c("Early Childhood", "Middle Childhood", "Adolescence", "Young Adulthood"))
 slcmaInfer(tsc_dev, 1, method="selectiveInference")
